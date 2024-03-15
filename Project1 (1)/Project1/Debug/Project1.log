@@ -1,0 +1,14 @@
+﻿  pch.cpp
+  ChildView.cpp
+  CMyRaytraceRenderer.cpp
+  GrCamera.cpp
+  GrObject.cpp
+  GrRenderer.cpp
+  GrTexture.cpp
+  GrTransform.cpp
+  OpenGLRenderer.cpp
+  OpenGLWnd.cpp
+  MainFrm.cpp
+  Project1.cpp
+  Generating Code...
+  Project1.vcxproj -> C:\Users\joeyv\source\repos\Project1 (1)\Debug\Project1.exe
