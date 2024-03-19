@@ -43,6 +43,15 @@ CChildView::CChildView()
 	CGrPtr<CGrComposite> whitebox = new CGrComposite;
 	whitepaint->Child(whitebox);
 	whitebox->Box(-10, -10, -10, 5, 5, 5);
+
+	//  Adding a Pyramid
+	CGrPtr<CGrMaterial> pyramidPaint = new CGrMaterial;
+	pyramidPaint->AmbientAndDiffuse(0.0f, 0.0f, 0.8f); 
+	scene->Child(pyramidPaint);
+
+	CGrPtr<CGrComposite> pyramid = new CGrComposite;
+	pyramidPaint->Child(pyramid);
+	pyramid->Pyramid(0, 0, -10, 5, 5, 10);
 }
 
 CChildView::~CChildView()

@@ -833,7 +833,28 @@ void CGrComposite::Poly4(const CGrPoint &a, const CGrPoint &b,
 
 }
 
+//
+// Name :         CGrComposite::Pyramid()
+// Description :  This is that always useful Pyramid creation function.  
+// Parameters :   x, y, z - The coordinates of tbe back, lower left corner of the pyramid.
+//                dx, dy, dz - The size of the pyramid.
+//                
+// Example :      Pyramid(0, 0, -10, 5, 5, 10)
+//                This creates an untextured Pyramid with the lower, back left corner
+//                at 0, 0, -10.  The box extends to x=5, y=6, and z=10.
+//
+void CGrComposite::Pyramid(double x, double y, double z, double dx, double dy, double dz)
+{
+    // Front face
+    Poly3(CGrPoint(x, y, z + dz), CGrPoint(x + dx, y, z + dz), CGrPoint(x + dx / 2, y + dy / 2, z), NULL);
 
+    // Side faces
+    Poly4(CGrPoint(x + dx, y, z + dz), CGrPoint(x + dx, y, z), CGrPoint(x + dx / 2, y + dy / 2, z), CGrPoint(x + dx / 2, y + dy / 2, z + dz), NULL);
+    Poly4(CGrPoint(x, y, z), CGrPoint(x, y, z + dz), CGrPoint(x + dx / 2, y + dy / 2, z + dz), CGrPoint(x + dx / 2, y + dy / 2, z), NULL);
+
+    // Bottom face
+    Poly4(CGrPoint(x, y, z), CGrPoint(x + dx, y, z), CGrPoint(x + dx, y, z + dz), CGrPoint(x, y, z + dz), NULL);
+}
 
 
 
