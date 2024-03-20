@@ -1,6 +1,9 @@
 #pragma once
 #include "graphics/GrRenderer.h"
 #include "graphics/RayIntersection.h"
+#include "graphics/GrCamera.h"
+#include "graphics/GrTexture.h".
+
 
 class CMyRaytraceRenderer :
 	public CGrRenderer
@@ -19,10 +22,27 @@ public:
     std::list<CGrTransform> m_mstack;
     CGrMaterial* m_material;
 
+    CGrCamera m_camera;
+    void SetCamera(CGrCamera camera) { m_camera = camera; }
+
     void SetWindow(CWnd* p_window);
     bool RendererStart();
     bool RendererEnd();
     void RendererMaterial(CGrMaterial* p_material);
+
+    double dotProduct(double*, double*);
+    double RayColor(CRay, int, double*, double);
+    void RayTexture(CGrTexture*, CGrPoint, double*);
+    double* Normalize(double*);
+    double* getPiexelColor(int, int, CGrTexture*);
+    double Length(double*);
+    bool m_diffuseOn = TRUE;
+    bool m_specOn = TRUE;
+    bool m_ambientOn = TRUE;
+    bool m_textureOn = TRUE;
+    bool m_shadow = TRUE;
+    int m_recurse = 2;
+    std::vector<Light> m_lights;
 
     virtual void RendererPushMatrix();
     virtual void RendererPopMatrix();

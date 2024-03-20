@@ -27,13 +27,13 @@ CChildView::CChildView()
 	m_scene = scene;
 
 	// A red box
-	CGrPtr<CGrMaterial> redpaint = new CGrMaterial;
-	redpaint->AmbientAndDiffuse(0.8f, 0.0f, 0.0f);
-	scene->Child(redpaint);
+//	CGrPtr<CGrMaterial> redpaint = new CGrMaterial;
+//	redpaint->AmbientAndDiffuse(0.8f, 0.0f, 0.0f);
+//	scene->Child(redpaint);
 
-	CGrPtr<CGrComposite> redbox = new CGrComposite;
-	redpaint->Child(redbox);
-	redbox->Box(1, 1, 1, 5, 5, 5);
+//	CGrPtr<CGrComposite> redbox = new CGrComposite;
+//	redpaint->Child(redbox);
+//	redbox->Box(1, 1, 1, 5, 5, 5);
 
 	// A white box
 	CGrPtr<CGrMaterial> whitepaint = new CGrMaterial;
@@ -42,16 +42,41 @@ CChildView::CChildView()
 
 	CGrPtr<CGrComposite> whitebox = new CGrComposite;
 	whitepaint->Child(whitebox);
-	whitebox->Box(-10, -10, -10, 5, 5, 5);
+	whitebox->Box(-10, 2, -10, 5, 5, 5);
 
-	//  Adding a Pyramid
-	CGrPtr<CGrMaterial> pyramidPaint = new CGrMaterial;
-	pyramidPaint->AmbientAndDiffuse(0.0f, 0.0f, 0.8f); 
-	scene->Child(pyramidPaint);
+	CGrPtr<CGrTexture> m_texture = new CGrTexture();
+	m_texture->LoadFile(L"textures/sunset.bmp");
+
+	CGrPtr<CGrTexture> m_texture2 = new CGrTexture();
+	m_texture2->LoadFile(L"textures/floor.bmp");
+
+	// A new box
+	CGrPtr<CGrMaterial> item1paint = new CGrMaterial;
+	item1paint->AmbientAndDiffuse(0.4f, 0.4f, 0.4f);
+	scene->Child(item1paint);
+
+	CGrPtr<CGrComposite> item1 = new CGrComposite;
+	item1paint->Child(item1);
+	item1->SlantBox(-10, 0, 2, 2, 2, 2, 1);
+
+	// A plane
+	CGrPtr<CGrMaterial> item3paint = new CGrMaterial;
+	item3paint->AmbientAndDiffuse(0.4f, 0.4f, 0.4f);
+	scene->Child(item3paint);
+
+	CGrPtr<CGrComposite> item3 = new CGrComposite;
+	item3paint->Child(item3);
+	item3->Box(-15, -3, -20, 30, 3, 40, m_texture2);
+
+
+	// Adding a Cylinder
+	CGrPtr<CGrMaterial> Pyramidpaint = new CGrMaterial;
+	Pyramidpaint->AmbientAndDiffuse(0.5, 0.5f, 0.5f);
+	scene->Child(Pyramidpaint);
 
 	CGrPtr<CGrComposite> pyramid = new CGrComposite;
-	pyramidPaint->Child(pyramid);
-	pyramid->Pyramid(0, 0, -10, 5, 5, 10);
+	Pyramidpaint->Child(pyramid);
+	pyramid->Cylinder(0, 5, 0, 5, 15, 1000, m_texture);
 }
 
 CChildView::~CChildView()
@@ -197,9 +222,16 @@ void CChildView::ConfigureRenderer(CGrRenderer* p_renderer)
 	float dimd = 0.5f;
 	GLfloat dim[] = { dimd, dimd, dimd, 1.0f };
 	GLfloat brightwhite[] = { 1.f, 1.f, 1.f, 1.0f };
+	GLfloat darkwhite[] = { 0.2, 0.2, 0.2, 1.0f };
 
-	p_renderer->AddLight(CGrPoint(1, 0.5, 1.2, 0),
-		dim, brightwhite, brightwhite);
+	p_renderer->AddLight(CGrPoint(15, 0.5, 0, 0),
+		NULL, brightwhite, brightwhite);
+
+	p_renderer->AddLight(CGrPoint(0, 10, 0, 0),
+		NULL, darkwhite, brightwhite);
+
+	p_renderer->AddLight(CGrPoint(0, 5.2, 20, 0),
+		NULL, darkwhite, brightwhite);
 }
 
 

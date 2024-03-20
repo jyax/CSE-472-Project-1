@@ -1,7 +1,14 @@
-﻿  CMyRaytraceRenderer.cpp
-  ChildView.cpp
-  MainFrm.cpp
-  Project1.cpp
-  GrObject.cpp
-  Generating Code...
+﻿  ChildView.cpp
+C:\Users\joeyv\source\repos\project_1\Project1\CMyRaytraceRenderer.h(5,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  (compiling source file '/ChildView.cpp')
+  
+C:\Users\joeyv\source\repos\project_1\Project1\ChildView.cpp(225,26): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+  (compiling source file '/ChildView.cpp')
+  
+C:\Users\joeyv\source\repos\project_1\Project1\ChildView.cpp(225,31): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+  (compiling source file '/ChildView.cpp')
+  
+C:\Users\joeyv\source\repos\project_1\Project1\ChildView.cpp(225,36): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+  (compiling source file '/ChildView.cpp')
+  
   Project1.vcxproj -> C:\Users\joeyv\source\repos\project_1\Debug\Project1.exe

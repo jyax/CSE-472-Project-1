@@ -7,6 +7,7 @@
 #include "graphics/OpenGLWnd.h"
 #include "graphics/GrCamera.h"
 #include "graphics/GrObject.h"
+#include "graphics/GrTexture.h"
 
 // CChildView window
 
