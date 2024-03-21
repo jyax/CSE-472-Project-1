@@ -834,26 +834,80 @@ void CGrComposite::Poly4(const CGrPoint &a, const CGrPoint &b,
 }
 
 //
-// Name :         CGrComposite::Pyramid()
-// Description :  This is that always useful Pyramid creation function.  
-// Parameters :   x, y, z - The coordinates of tbe back, lower left corner of the pyramid.
-//                dx, dy, dz - The size of the pyramid.
-//                
-// Example :      Pyramid(0, 0, -10, 5, 5, 10)
-//                This creates an untextured Pyramid with the lower, back left corner
-//                at 0, 0, -10.  The box extends to x=5, y=6, and z=10.
+// Name :         CGrComposite::Cylinder()
+// Description :  This is that always useful cylinder creation function. 
+//                creates a cylinder on its side.
+// Parameters :   x, y, z - The coordinates of the back, lower left corners.
+//                radius, height - The size of the cylinder.
+//                p_texture - An option texture to apply to the box.
+// Example :      Cylinder(-10, 10, -15, 5, 15, 1000, m_texture);
+//                This creates a textured cylinder with the lower, back left corner
+//                at -10, 10,-152.  The box extends to radius=5, height=15
+//                num_segments defines how around appearing the cylinder will be.
+//                This box will have a texture applied to it.
 //
-void CGrComposite::Pyramid(double x, double y, double z, double dx, double dy, double dz)
+void CGrComposite::Cylinder(double x, double y, double z, double radius, double height, int num_segments, CGrTexture *p_texture)
 {
-    // Front face
-    Poly3(CGrPoint(x, y, z + dz), CGrPoint(x + dx, y, z + dz), CGrPoint(x + dx / 2, y + dy / 2, z), NULL);
+    CGrPtr<CGrPolygon> poly;
+    double angle_top = 2 * 3.1415926 / num_segments;
+    
+    poly = new CGrPolygon;
+    poly->AddNormal3d(0, 0, -1);
 
-    // Side faces
-    Poly4(CGrPoint(x + dx, y, z + dz), CGrPoint(x + dx, y, z), CGrPoint(x + dx / 2, y + dy / 2, z), CGrPoint(x + dx / 2, y + dy / 2, z + dz), NULL);
-    Poly4(CGrPoint(x, y, z), CGrPoint(x, y, z + dz), CGrPoint(x + dx / 2, y + dy / 2, z + dz), CGrPoint(x + dx / 2, y + dy / 2, z), NULL);
+    for (int j = num_segments - 1; j >= 0; j--) {
+        double angle = j * angle_top;
+        double x_pos = x + radius * cos(angle);
+        double y_pos = y + radius * sin(angle);
+        poly->AddVertex3d(x_pos, y_pos, z);
 
-    // Bottom face
-    Poly4(CGrPoint(x, y, z), CGrPoint(x + dx, y, z), CGrPoint(x + dx, y, z + dz), CGrPoint(x, y, z + dz), NULL);
+        if (p_texture) {
+            poly->Texture(p_texture);
+            poly->AddTex2d(cos(angle) / 2 + 0.5, sin(angle) / 2 + 0.5);
+        }
+    }
+    Child(poly);
+
+    poly = new CGrPolygon;
+    poly->AddNormal3d(0, 0, 1);
+
+    for (int j = 0; j < num_segments; j++) {
+        double angle = j * angle_top;
+        double x_pos = x + radius * cos(angle);
+        double y_pos = y + radius * sin(angle);
+        poly->AddVertex3d(x_pos, y_pos, z + height);
+
+        if (p_texture) {
+            poly->Texture(p_texture);
+            poly->AddTex2d(cos(angle) / 2 + 0.5, sin(angle) / 2 + 0.5);
+        }
+    }
+
+    Child(poly);
+
+    for (int i = 0; i < num_segments; i++) {
+        double angle = i * angle_top;
+        double x_pos1 = x + radius * cos(angle);
+        double y_pos1 = y + radius * sin(angle);
+        double x_pos2 = x + radius * cos(angle + angle_top);
+        double y_pos2 = y + radius * sin(angle + angle_top);
+
+        poly = new CGrPolygon;
+        poly->AddNormal3d(cos(angle + angle_top / 2), sin(angle + angle_top / 2), 0);
+        poly->AddVertex3d(x_pos1, y_pos1, z);
+        poly->AddVertex3d(x_pos2, y_pos2, z);
+        poly->AddVertex3d(x_pos2, y_pos2, z + height);
+        poly->AddVertex3d(x_pos1, y_pos1, z + height);
+
+        if (p_texture) {
+            poly->Texture(p_texture);
+            poly->AddTex2d(i / (double)num_segments, 0);
+            poly->AddTex2d((i + 1) / (double)num_segments, 0);
+            poly->AddTex2d((i + 1) / (double)num_segments, 1);
+            poly->AddTex2d(i / (double)num_segments, 1);
+        }
+
+        Child(poly);
+    }
 }
 
 

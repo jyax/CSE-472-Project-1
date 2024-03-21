@@ -152,7 +152,7 @@ public:
     void SlantBox(double x, double y, double z, double dx, double dy, double dz, double lift);
     void Poly3(const CGrPoint &a, const CGrPoint &b, const CGrPoint &c, CGrTexture *p_texture=NULL);
     void Poly4(const CGrPoint &a, const CGrPoint &b, const CGrPoint &c, const CGrPoint &d, CGrTexture *p_texture=NULL);
-    void Pyramid(double x, double y, double z, double dx, double dy, double dz);
+    void Cylinder(double x, double y, double z, double radius, double height, int num_segments, CGrTexture* p_texture);
 
 private:
     std::list<CGrPtr<CGrObject> > m_children;
