@@ -38,6 +38,7 @@ CChildView::CChildView()
 	// A white box
 	CGrPtr<CGrMaterial> whitepaint = new CGrMaterial;
 	whitepaint->AmbientAndDiffuse(0.8f, 0.8f, 0.8f);
+	whitepaint->Specular(0.5f, 0.5f, 0.5f);
 	scene->Child(whitepaint);
 
 	CGrPtr<CGrComposite> whitebox = new CGrComposite;
@@ -45,7 +46,7 @@ CChildView::CChildView()
 	whitebox->Box(-10, 2, -10, 5, 5, 5);
 
 	CGrPtr<CGrTexture> m_texture = new CGrTexture();
-	m_texture->LoadFile(L"textures/sunset.bmp");
+	m_texture->LoadFile(L"textures/plank01.bmp");
 
 	CGrPtr<CGrTexture> m_texture2 = new CGrTexture();
 	m_texture2->LoadFile(L"textures/floor.bmp");
@@ -53,6 +54,7 @@ CChildView::CChildView()
 	// A new box
 	CGrPtr<CGrMaterial> item1paint = new CGrMaterial;
 	item1paint->AmbientAndDiffuse(0.4f, 0.4f, 0.4f);
+	item1paint->Specular(0.5f, 0.5f, 0.5f);
 	scene->Child(item1paint);
 
 	CGrPtr<CGrComposite> item1 = new CGrComposite;
@@ -70,13 +72,23 @@ CChildView::CChildView()
 
 
 	// Adding a Cylinder
-	CGrPtr<CGrMaterial> Pyramidpaint = new CGrMaterial;
-	Pyramidpaint->AmbientAndDiffuse(0.5, 0.5f, 0.5f);
-	scene->Child(Pyramidpaint);
+	CGrPtr<CGrMaterial> Cylinderpaint = new CGrMaterial;
+	Cylinderpaint->AmbientAndDiffuse(0.5, 0.5f, 0.5f);
+	//Cylinderpaint->Specular(0.5f, 0.5f, 0.5f);
+	scene->Child(Cylinderpaint);
 
-	CGrPtr<CGrComposite> pyramid = new CGrComposite;
-	Pyramidpaint->Child(pyramid);
-	pyramid->Cylinder(0, 5, 0, 5, 15, 1000, m_texture);
+	CGrPtr<CGrComposite> cylinder = new CGrComposite;
+	Cylinderpaint->Child(cylinder);
+	cylinder->Cylinder(0, 5, 0, 5, 15, 1000, m_texture);
+
+	CGrPtr<CGrMaterial> boxMaterial = new CGrMaterial;
+	boxMaterial->AmbientAndDiffuse(0.8f, 0.8f, 0.8f);
+	boxMaterial->Specular(0.5f, 0.5f, 0.5f);
+	scene->Child(boxMaterial);
+
+	CGrPtr<CGrComposite> box = new CGrComposite;
+	boxMaterial->Child(box);
+	box->Box(-10, 2, -10, 5, 5, 5);
 }
 
 CChildView::~CChildView()

@@ -204,13 +204,13 @@ double CMyRaytraceRenderer::RayColor(CRay ray, int recurse, double* raycolor, do
 		CGrTexture* texture;
 		CGrPoint texcoord;
 
-		m_intersection.IntersectInfo(ray, nearest, t,
-			N, material, texture, texcoord);
+		m_intersection.IntersectInfo(ray, nearest, t, N, material, texture, texcoord);
 
 		if (material != NULL)
 		{
-
-			// comoute ambient light
+			//
+			// AMBIENT LIGHT
+			//
 			if (m_ambientOn) {
 				for (int c = 0; c < 3; c++) {
 					raycolor[c] = m_lights[0].m_ambient[c] * material->Ambient(c);
@@ -218,20 +218,14 @@ double CMyRaytraceRenderer::RayColor(CRay ray, int recurse, double* raycolor, do
 				}
 			}
 
-
-			// for each light
 			for (int i = 0; i < CGrRenderer::LightCnt(); i++) {
 				CGrRenderer::Light light = m_lights[i];
-
-
-
-				// compute view position
 				double cameraPosition[3] = { Eye()[0],Eye()[1],Eye()[2] };
-				double cameraDirection[3] = { intersect[0] - cameraPosition[0],
-												intersect[1] - cameraPosition[1],
-												intersect[2] - cameraPosition[2] };
+				double cameraDirection[3] = { intersect[0] - cameraPosition[0], intersect[1] - cameraPosition[1], intersect[2] - cameraPosition[2] };
 
-				// Specular reflections from other objects.
+				//
+				// SPECULAR REFLECTIONS
+				//
 				if (recurse > 1 && (material->Specular(0) > 0 || material->Specular(1) > 0 || material->Specular(2) > 0)) {
 					CGrPoint V = cameraDirection;
 					CGrPoint R = N * 2 * dotProduct(N, V) - V;
@@ -246,39 +240,43 @@ double CMyRaytraceRenderer::RayColor(CRay ray, int recurse, double* raycolor, do
 
 				}
 
-				// compute lightDirection
+				//
+				// lightDirection
+				//
 				double lightDirection[4] = { 0.,0.,0.,0. };
 				if (light.m_pos[3] == 0)
-					for (int c = 0; c < 4; c++)
+					for (int c = 0; c < 4; c++) {
 						lightDirection[c] = light.m_pos[c];
+					}
 				else {
-					for (int c = 0; c < 4; c++)
+					for (int c = 0; c < 4; c++) {
 						lightDirection[c] = light.m_pos[c] - intersect[c];
+					}
 				}
-				// normalize
-				for (int c = 0; c < 4; c++)
+				for (int c = 0; c < 4; c++) {
 					lightDirection[c] = Normalize(lightDirection)[c];
+				}
 
-
-				//compute shadow ray
+				//
+				// SHADOW RAY
+				//
 				if (m_shadow) {
 					CRay shadowRay(intersect, lightDirection);
 					double shadowT;
 					CGrPoint shadowIntersect;
 					const CRayIntersection::Object* shadowObj;
 					if (m_intersection.Intersect(shadowRay, 1e20, nearest, shadowObj, shadowT, shadowIntersect)) {
-						// check if the object is between the intersection point and the light source
-						//if (Length(lightDirection) - shadowT > 0) {
-							// light source is occluded, skip this light
 						continue;
-						//}
 					}
 				}
 				double surfaceNormal[4] = { N[0], N[1], N[2], N[3] };
-				if (dotProduct(surfaceNormal, lightDirection) < 0)
+				if (dotProduct(surfaceNormal, lightDirection) < 0) {
 					continue;
+				}
 
-				// comoute diffuse light
+				//
+				// DIFFUSE LIGHT
+				//
 				if (m_diffuseOn) {
 					for (int c = 0; c < 3; c++) {
 						raycolor[c] += light.m_diffuse[c] * material->Diffuse(c) * dotProduct(surfaceNormal, lightDirection);
@@ -287,14 +285,14 @@ double CMyRaytraceRenderer::RayColor(CRay ray, int recurse, double* raycolor, do
 
 				}
 
-				// compute halfvector
-				double halfVector[3] = { lightDirection[0] + cameraDirection[0],
-											lightDirection[1] + cameraDirection[1],
-											lightDirection[2] + cameraDirection[2] };
-				// normalize
-				for (int c = 0; c < 3; c++)
+				double halfVector[3] = { lightDirection[0] + cameraDirection[0], lightDirection[1] + cameraDirection[1], lightDirection[2] + cameraDirection[2] };
+				for (int c = 0; c < 3; c++) {
 					halfVector[c] = Normalize(halfVector)[c];
-				// compute Specular light
+				}
+				
+				//
+				// SPECULAR LIGHT
+				//
 				if (m_specOn) {
 					for (int c = 0; c < 3; c++) {
 						raycolor[c] += light.m_specular[c] * material->Specular(c) * pow(dotProduct(surfaceNormal, halfVector), material->Shininess());
@@ -320,31 +318,43 @@ void CMyRaytraceRenderer::RayTexture(CGrTexture* texture, CGrPoint texcoord, dou
 		int y0 = V / 1;
 		int y1 = y0 + 1;
 
-		if (x1 >= texture->Width()) x1 = texture->Width() - 1;
-		if (y1 >= texture->Height()) y1 = texture->Height() - 1;
+		if (x1 >= texture->Width()) { 
+			x1 = texture->Width() - 1; 
+		} if (y1 >= texture->Height()) {
+			y1 = texture->Height() - 1;
+		}
 
 		double x = texcoord[0] * texture->Width(); 
 		double y = texcoord[1] * texture->Height(); 
 		double u = std::modf(x, &x);
 		double v = std::modf(y, &y);
-
-		double w[4] = { (1 - u) * (1 - v),
-								u * (1 - v),
-						(1 - u) * v,
-								u * v };
+		double w[4] = { (1 - u) * (1 - v), u * (1 - v), (1 - u) * v, u * v };
 
 		double* c1 = getPiexelColor(U, V, texture);
 		double* c2 = getPiexelColor(x0, y1, texture);
 		double* c3 = getPiexelColor(x1, y0, texture);
 		double* c4 = getPiexelColor(x1, y1, texture);
 		double lightambien[3] = { 0.3,0.3,0.3 };
+
 		for (int k = 0; k < 3; k++)
 		{
 			raytexture[k] = (w[0] * c1[k] + w[1] * c2[k] + w[2] * c3[k] + w[3] * c4[k]) * lightambien[k];
-			if (raytexture[k] > 1) raytexture[k] = 1;
+			if (raytexture[k] > 1) { 
+				raytexture[k] = 1; 
+			}
 		}
 
 	}
+}
+
+double CMyRaytraceRenderer::Length(double* vec)
+{
+	int len = sizeof(vec);
+	double sum = 0.0;
+	for (int i = 0; i < len; i++) {
+		sum += vec[i] * vec[i];
+	}
+	return sqrt(sum);
 }
 
 double* CMyRaytraceRenderer::getPiexelColor(int u, int v, CGrTexture* texture)
@@ -357,13 +367,14 @@ double* CMyRaytraceRenderer::getPiexelColor(int u, int v, CGrTexture* texture)
 	return rgb;
 }
 
-double CMyRaytraceRenderer::Length(double* vec)
+double CMyRaytraceRenderer::dotProduct(double* p1, double* p2)
 {
-	int len = sizeof(vec);
-	double sum = 0.0;
-	for (int i = 0; i < len; i++)
-		sum += vec[i] * vec[i];
-	return sqrt(sum);
+	int len = sizeof(p1);
+	double ret = 0.0;
+	for (int i = 0; i < len; i++) {
+		ret += p1[i] * p2[i];
+	}
+	return ret;
 }
 
 double* CMyRaytraceRenderer::Normalize(double* vec)
@@ -372,17 +383,9 @@ double* CMyRaytraceRenderer::Normalize(double* vec)
 	double length = Length(vec);
 
 	double ret[len] = { 0.0 };
-	for (int i = 0; i < len; i++)
+	for (int i = 0; i < len; i++) {
 		ret[i] = vec[i] / length;
-
+	}
 	return ret;
 }
 
-double CMyRaytraceRenderer::dotProduct(double* p1, double* p2)
-{
-	int len = sizeof(p1);
-	double ret = 0.0;
-	for (int i = 0; i < len; i++)
-		ret += p1[i] * p2[i];
-	return ret;
-}

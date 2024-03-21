@@ -846,7 +846,7 @@ void CGrComposite::Poly4(const CGrPoint &a, const CGrPoint &b,
 //                num_segments defines how around appearing the cylinder will be.
 //                This box will have a texture applied to it.
 //
-void CGrComposite::Cylinder(double x, double y, double z, double radius, double height, int num_segments, CGrTexture* p_texture)
+void CGrComposite::Cylinder(double x, double y, double z, double radius, double height, int num_segments, CGrTexture *p_texture)
 {
     CGrPtr<CGrPolygon> poly;
     double angle_top = 2 * 3.1415926 / num_segments;
